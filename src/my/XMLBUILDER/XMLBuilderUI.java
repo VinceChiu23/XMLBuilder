@@ -6,6 +6,7 @@
 package my.XMLBUILDER;
 
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
@@ -73,7 +74,7 @@ public class XMLBuilderUI extends javax.swing.JFrame {
             setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
             setTitle("XML Builder");
 
-            jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "v1.0", javax.swing.border.TitledBorder.RIGHT, javax.swing.border.TitledBorder.BOTTOM));
+            jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "v1.1", javax.swing.border.TitledBorder.RIGHT, javax.swing.border.TitledBorder.BOTTOM));
 
             srcButton.setText("Source File:");
             srcButton.addActionListener(new java.awt.event.ActionListener() {
@@ -83,6 +84,11 @@ public class XMLBuilderUI extends javax.swing.JFrame {
             });
 
             srcTextField.setText("C:\\...\\tests\\BasePlatform.java");
+            srcTextField.addKeyListener(new java.awt.event.KeyAdapter() {
+                public void keyPressed(java.awt.event.KeyEvent evt) {
+                    srcTextFieldKeyPressed(evt);
+                }
+            });
 
             jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
             jLabel1.setText("ClassName:");
@@ -159,6 +165,8 @@ public class XMLBuilderUI extends javax.swing.JFrame {
                     .addContainerGap())
             );
 
+            jPanel1.getAccessibleContext().setAccessibleName("v1.1");
+
             pack();
         }// </editor-fold>//GEN-END:initComponents
 
@@ -168,10 +176,7 @@ public class XMLBuilderUI extends javax.swing.JFrame {
         File file = jFileChooser1.getSelectedFile();
         String filePath = file.getAbsolutePath();
         srcTextField.setText(filePath);
-        String className = XMLBuilder.findClassName(filePath);
-        if (className != null) {
-            classNameTextField.setText(XMLBuilder.findClassName(file.getAbsolutePath()));
-        }        
+        generateClassName();
 //        XMLBuilder.fileToRead = file.getAbsolutePath();
 //        try {
 //          // What to do with the file, e.g. display it in a TextArea
@@ -187,8 +192,7 @@ public class XMLBuilderUI extends javax.swing.JFrame {
     }//GEN-LAST:event_srcButtonActionPerformed
 
     private void generateButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_generateButtonActionPerformed
-        String result = XMLBuilder.build(srcTextField.getText(), classNameTextField.getText());// TODO add your handling code here:
-        resultArea.setText(result);
+        generateXML();
     }//GEN-LAST:event_generateButtonActionPerformed
 
     private void copyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_copyActionPerformed
@@ -196,6 +200,27 @@ public class XMLBuilderUI extends javax.swing.JFrame {
         resultArea.copy();
     }//GEN-LAST:event_copyActionPerformed
 
+    private void srcTextFieldKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_srcTextFieldKeyPressed
+        // TODO add your handling code here:
+        if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
+            System.out.println("Enter hit");
+            generateClassName();
+            generateXML();
+        }
+    }//GEN-LAST:event_srcTextFieldKeyPressed
+
+    private void generateXML() {
+        String result = XMLBuilder.build(srcTextField.getText(), classNameTextField.getText());// TODO add your handling code here:
+        resultArea.setText(result);
+    }
+    
+    private void generateClassName() {
+        String filePath = srcTextField.getText();
+            String className = XMLBuilder.findClassName(filePath);
+        if (className != null) {
+            classNameTextField.setText(className);
+        }
+    }
     
     
     /**
