@@ -21,11 +21,16 @@ public class XMLBuilder {
             BufferedReader br = new BufferedReader(new FileReader(fileToRead));
             String currentLine;
             while ((currentLine = br.readLine()) != null) {
-                if (currentLine.trim().startsWith("public void")) {
+//                System.out.println(currentLine);
+                if (currentLine.trim().startsWith("@Test")) {
+                    do {
+                        currentLine = br.readLine().trim();
+                    } while (!(currentLine.startsWith("public") || currentLine.startsWith("protected") || currentLine.startsWith("private") || currentLine.startsWith("internal")));
+ //               if (currentLine.trim().startsWith("public void")) {
                     String methodLine ="";
                     int count = 0;
                     do {
-                        methodLine = methodLine + currentLine;
+                        methodLine = methodLine.concat(currentLine).trim();
 //                        System.out.println(currentLine);
                         for (int i=0; i <currentLine.length(); i++) {
                             char ch = currentLine.charAt(i);
