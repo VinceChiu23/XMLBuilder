@@ -58,7 +58,12 @@ public class XMLBuilder {
 
     }
 
-    // Generate the XML based on the method
+    /**
+     * Generate the XML based on the method
+     * @param method - String representation of the method in (public static void methodName(arg))
+     * @param className - Class name of the java file. 
+     * @return 
+     */
     private static String generateXMLFromString(String method, String className) {
         int firstParenthesis = method.indexOf("(");
         int lastParenthesis = method.lastIndexOf(")");
