@@ -28,14 +28,10 @@ public class XMLBuilderUI extends javax.swing.JFrame {
         initComponents();
         resultArea.add(resultsPopupMenu);
         resultArea.setComponentPopupMenu(resultsPopupMenu);
-//        Action copy = resultArea.getActionMap().get("copy");
-//        Action selectAll = resultArea.getActionMap().get("SelectAll");
-//        resultsPopupMenu.add(copy);
-//        resultsPopupMenu.add(selectAll);
-//        Action[] Actions = resultArea.getActions();
-//        for (Action act : Actions) {
-//            System.out.println("This is the action " + act.toString() );
-//        }
+        srcTextField.add(copyPasteSelectAll);
+        srcTextField.setComponentPopupMenu(copyPasteSelectAll);
+        classNameTextField.add(classNamePopup);
+        classNameTextField.setComponentPopupMenu(classNamePopup);
     }
 
     /**
@@ -50,6 +46,18 @@ public class XMLBuilderUI extends javax.swing.JFrame {
         jFileChooser1 = new javax.swing.JFileChooser();
         resultsPopupMenu = new javax.swing.JPopupMenu();
         copy = new javax.swing.JMenuItem();
+        jSeparator2 = new javax.swing.JPopupMenu.Separator();
+        rsltSelectAll = new javax.swing.JMenuItem();
+        copyPasteSelectAll = new javax.swing.JPopupMenu();
+        copySrc = new javax.swing.JMenuItem();
+        pasteSrc = new javax.swing.JMenuItem();
+        jSeparator1 = new javax.swing.JPopupMenu.Separator();
+        selectAllSrc = new javax.swing.JMenuItem();
+        classNamePopup = new javax.swing.JPopupMenu();
+        copyClassName = new javax.swing.JMenuItem();
+        pasteClassName = new javax.swing.JMenuItem();
+        jSeparator3 = new javax.swing.JPopupMenu.Separator();
+        selectAllClassName = new javax.swing.JMenuItem();
         jPanel1 = new javax.swing.JPanel();
         srcButton = new javax.swing.JButton();
         srcTextField = new javax.swing.JTextField();
@@ -70,6 +78,65 @@ public class XMLBuilderUI extends javax.swing.JFrame {
                 }
             });
             resultsPopupMenu.add(copy);
+            resultsPopupMenu.add(jSeparator2);
+
+            rsltSelectAll.setText("Select All");
+            rsltSelectAll.addActionListener(new java.awt.event.ActionListener() {
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    rsltSelectAllActionPerformed(evt);
+                }
+            });
+            resultsPopupMenu.add(rsltSelectAll);
+
+            copySrc.setText("Copy");
+            copySrc.addActionListener(new java.awt.event.ActionListener() {
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    copySrcActionPerformed(evt);
+                }
+            });
+            copyPasteSelectAll.add(copySrc);
+
+            pasteSrc.setText("Paste");
+            pasteSrc.addActionListener(new java.awt.event.ActionListener() {
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    pasteSrcActionPerformed(evt);
+                }
+            });
+            copyPasteSelectAll.add(pasteSrc);
+            copyPasteSelectAll.add(jSeparator1);
+
+            selectAllSrc.setText("SelectAll");
+            selectAllSrc.addActionListener(new java.awt.event.ActionListener() {
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    selectAllSrcActionPerformed(evt);
+                }
+            });
+            copyPasteSelectAll.add(selectAllSrc);
+
+            copyClassName.setText("Copy");
+            copyClassName.addActionListener(new java.awt.event.ActionListener() {
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    copyClassNameActionPerformed(evt);
+                }
+            });
+            classNamePopup.add(copyClassName);
+
+            pasteClassName.setText("Paste");
+            pasteClassName.addActionListener(new java.awt.event.ActionListener() {
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    pasteClassNameActionPerformed(evt);
+                }
+            });
+            classNamePopup.add(pasteClassName);
+            classNamePopup.add(jSeparator3);
+
+            selectAllClassName.setText("Select All");
+            selectAllClassName.addActionListener(new java.awt.event.ActionListener() {
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    selectAllClassNameActionPerformed(evt);
+                }
+            });
+            classNamePopup.add(selectAllClassName);
 
             setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
             setTitle("XML Builder");
@@ -187,8 +254,6 @@ public class XMLBuilderUI extends javax.swing.JFrame {
     } else {
         System.out.println("File access cancelled by user.");
     }
-
-// TODO add your handling code here:
     }//GEN-LAST:event_srcButtonActionPerformed
 
     private void generateButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_generateButtonActionPerformed
@@ -197,20 +262,62 @@ public class XMLBuilderUI extends javax.swing.JFrame {
 
     private void copyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_copyActionPerformed
         // TODO add your handling code here
+        resultArea.requestFocusInWindow();
         resultArea.copy();
     }//GEN-LAST:event_copyActionPerformed
 
     private void srcTextFieldKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_srcTextFieldKeyPressed
         // TODO add your handling code here:
         if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
-            System.out.println("Enter hit");
             generateClassName();
             generateXML();
         }
     }//GEN-LAST:event_srcTextFieldKeyPressed
 
+    private void copySrcActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_copySrcActionPerformed
+        // TODO add your handling code here:
+        srcTextField.requestFocusInWindow();
+        srcTextField.copy();
+    }//GEN-LAST:event_copySrcActionPerformed
+
+    private void pasteSrcActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pasteSrcActionPerformed
+        // TODO add your handling code here:
+        srcTextField.requestFocusInWindow();
+        srcTextField.paste();
+    }//GEN-LAST:event_pasteSrcActionPerformed
+
+    private void selectAllSrcActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_selectAllSrcActionPerformed
+        // TODO add your handling code here:
+        srcTextField.requestFocusInWindow();
+        srcTextField.selectAll();
+    }//GEN-LAST:event_selectAllSrcActionPerformed
+
+    private void rsltSelectAllActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rsltSelectAllActionPerformed
+        // TODO add your handling code here:
+        resultArea.requestFocusInWindow();
+        resultArea.selectAll();
+    }//GEN-LAST:event_rsltSelectAllActionPerformed
+
+    private void copyClassNameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_copyClassNameActionPerformed
+        // TODO add your handling code here:
+        classNameTextField.requestFocusInWindow();
+        classNameTextField.copy();
+    }//GEN-LAST:event_copyClassNameActionPerformed
+
+    private void pasteClassNameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pasteClassNameActionPerformed
+        // TODO add your handling code here:
+        classNameTextField.requestFocusInWindow();
+        classNameTextField.paste();
+    }//GEN-LAST:event_pasteClassNameActionPerformed
+
+    private void selectAllClassNameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_selectAllClassNameActionPerformed
+        // TODO add your handling code here:
+        classNameTextField.requestFocusInWindow();
+        classNameTextField.selectAll();
+    }//GEN-LAST:event_selectAllClassNameActionPerformed
+
     private void generateXML() {
-        String result = XMLBuilder.build(srcTextField.getText(), classNameTextField.getText());// TODO add your handling code here:
+        String result = XMLBuilder.build(srcTextField.getText(), classNameTextField.getText());
         resultArea.setText(result);
     }
     
@@ -278,15 +385,27 @@ public class XMLBuilderUI extends javax.swing.JFrame {
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JPopupMenu classNamePopup;
     private javax.swing.JTextField classNameTextField;
     private javax.swing.JMenuItem copy;
+    private javax.swing.JMenuItem copyClassName;
+    private javax.swing.JPopupMenu copyPasteSelectAll;
+    private javax.swing.JMenuItem copySrc;
     private javax.swing.JButton generateButton;
     private javax.swing.JFileChooser jFileChooser1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JPopupMenu.Separator jSeparator1;
+    private javax.swing.JPopupMenu.Separator jSeparator2;
+    private javax.swing.JPopupMenu.Separator jSeparator3;
+    private javax.swing.JMenuItem pasteClassName;
+    private javax.swing.JMenuItem pasteSrc;
     private javax.swing.JTextArea resultArea;
     private javax.swing.JPopupMenu resultsPopupMenu;
+    private javax.swing.JMenuItem rsltSelectAll;
+    private javax.swing.JMenuItem selectAllClassName;
+    private javax.swing.JMenuItem selectAllSrc;
     private javax.swing.JButton srcButton;
     private javax.swing.JTextField srcTextField;
     // End of variables declaration//GEN-END:variables
