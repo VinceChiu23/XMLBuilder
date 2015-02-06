@@ -5,13 +5,18 @@
  */
 package my.XMLBUILDER;
 
+import java.awt.Rectangle;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import javafx.scene.input.KeyCode;
 import javax.swing.Action;
 import javax.swing.JFileChooser;
+import javax.swing.text.DefaultHighlighter;
+import javax.swing.text.Document;
+import javax.swing.text.Highlighter;
 
 /**
  *
@@ -19,7 +24,8 @@ import javax.swing.JFileChooser;
  */
 public class XMLBuilderUI extends javax.swing.JFrame {
     
-    
+    private boolean searchDown = true;
+    private int searchPos = 0;
 
     /**
      * Creates new form XMLBuilderUI
@@ -32,6 +38,8 @@ public class XMLBuilderUI extends javax.swing.JFrame {
         srcTextField.setComponentPopupMenu(copyPasteSelectAll);
         classNameTextField.add(classNamePopup);
         classNameTextField.setComponentPopupMenu(classNamePopup);
+        searchDialog.setLocationRelativeTo(null);
+        
     }
 
     /**
@@ -48,6 +56,8 @@ public class XMLBuilderUI extends javax.swing.JFrame {
         copy = new javax.swing.JMenuItem();
         jSeparator2 = new javax.swing.JPopupMenu.Separator();
         rsltSelectAll = new javax.swing.JMenuItem();
+        jSeparator4 = new javax.swing.JPopupMenu.Separator();
+        resultSearchBut = new javax.swing.JMenuItem();
         copyPasteSelectAll = new javax.swing.JPopupMenu();
         copySrc = new javax.swing.JMenuItem();
         pasteSrc = new javax.swing.JMenuItem();
@@ -58,6 +68,13 @@ public class XMLBuilderUI extends javax.swing.JFrame {
         pasteClassName = new javax.swing.JMenuItem();
         jSeparator3 = new javax.swing.JPopupMenu.Separator();
         selectAllClassName = new javax.swing.JMenuItem();
+        searchDialog = new javax.swing.JDialog();
+        jPanel2 = new javax.swing.JPanel();
+        searchTextField = new javax.swing.JTextField();
+        findNextButton = new javax.swing.JButton();
+        searchUpRadio = new javax.swing.JRadioButton();
+        searchDownRadio = new javax.swing.JRadioButton();
+        warningMsg = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
         srcButton = new javax.swing.JButton();
         srcTextField = new javax.swing.JTextField();
@@ -87,6 +104,15 @@ public class XMLBuilderUI extends javax.swing.JFrame {
                 }
             });
             resultsPopupMenu.add(rsltSelectAll);
+            resultsPopupMenu.add(jSeparator4);
+
+            resultSearchBut.setText("Find");
+            resultSearchBut.addActionListener(new java.awt.event.ActionListener() {
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    resultSearchButActionPerformed(evt);
+                }
+            });
+            resultsPopupMenu.add(resultSearchBut);
 
             copySrc.setText("Copy");
             copySrc.addActionListener(new java.awt.event.ActionListener() {
@@ -138,6 +164,91 @@ public class XMLBuilderUI extends javax.swing.JFrame {
             });
             classNamePopup.add(selectAllClassName);
 
+            searchDialog.setTitle("Find");
+            searchDialog.setModalityType(java.awt.Dialog.ModalityType.MODELESS);
+
+            searchTextField.setText("Ver");
+            searchTextField.addKeyListener(new java.awt.event.KeyAdapter() {
+                public void keyPressed(java.awt.event.KeyEvent evt) {
+                    searchTextFieldKeyPressed(evt);
+                }
+            });
+
+            findNextButton.setText("Find Next");
+            findNextButton.addActionListener(new java.awt.event.ActionListener() {
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    findNextButtonActionPerformed(evt);
+                }
+            });
+
+            searchUpRadio.setText("Up");
+            searchUpRadio.addActionListener(new java.awt.event.ActionListener() {
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    searchUpRadioActionPerformed(evt);
+                }
+            });
+
+            searchDownRadio.setSelected(true);
+            searchDownRadio.setText("Down");
+            searchDownRadio.addActionListener(new java.awt.event.ActionListener() {
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    searchDownRadioActionPerformed(evt);
+                }
+            });
+
+            warningMsg.setForeground(new java.awt.Color(255, 0, 51));
+
+            javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+            jPanel2.setLayout(jPanel2Layout);
+            jPanel2Layout.setHorizontalGroup(
+                jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel2Layout.createSequentialGroup()
+                    .addContainerGap()
+                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(warningMsg, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(searchTextField)
+                        .addGroup(jPanel2Layout.createSequentialGroup()
+                            .addComponent(searchUpRadio)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addComponent(searchDownRadio)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addComponent(findNextButton)
+                            .addGap(0, 0, Short.MAX_VALUE)))
+                    .addContainerGap())
+            );
+            jPanel2Layout.setVerticalGroup(
+                jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel2Layout.createSequentialGroup()
+                    .addContainerGap()
+                    .addComponent(searchTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGap(4, 4, 4)
+                    .addComponent(warningMsg)
+                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(searchDownRadio)
+                            .addComponent(searchUpRadio))
+                        .addComponent(findNextButton))
+                    .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            );
+
+            javax.swing.GroupLayout searchDialogLayout = new javax.swing.GroupLayout(searchDialog.getContentPane());
+            searchDialog.getContentPane().setLayout(searchDialogLayout);
+            searchDialogLayout.setHorizontalGroup(
+                searchDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(searchDialogLayout.createSequentialGroup()
+                    .addContainerGap()
+                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addContainerGap())
+            );
+            searchDialogLayout.setVerticalGroup(
+                searchDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(searchDialogLayout.createSequentialGroup()
+                    .addContainerGap()
+                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addContainerGap())
+            );
+
             setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
             setTitle("XML Builder");
 
@@ -175,18 +286,20 @@ public class XMLBuilderUI extends javax.swing.JFrame {
                 jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(jPanel1Layout.createSequentialGroup()
                     .addContainerGap()
-                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addComponent(srcButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                     .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(srcTextField)
-                        .addComponent(classNameTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 419, Short.MAX_VALUE))
+                        .addGroup(jPanel1Layout.createSequentialGroup()
+                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addComponent(srcButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(srcTextField)
+                                .addComponent(classNameTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 419, Short.MAX_VALUE)))
+                        .addGroup(jPanel1Layout.createSequentialGroup()
+                            .addGap(0, 0, Short.MAX_VALUE)
+                            .addComponent(generateButton)
+                            .addGap(0, 0, Short.MAX_VALUE)))
                     .addContainerGap())
-                .addGroup(jPanel1Layout.createSequentialGroup()
-                    .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(generateButton)
-                    .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             );
             jPanel1Layout.setVerticalGroup(
                 jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -209,6 +322,11 @@ public class XMLBuilderUI extends javax.swing.JFrame {
             resultArea.setFont(new java.awt.Font("Monospaced", 0, 12)); // NOI18N
             resultArea.setRows(5);
             resultArea.setTabSize(3);
+            resultArea.addKeyListener(new java.awt.event.KeyAdapter() {
+                public void keyPressed(java.awt.event.KeyEvent evt) {
+                    resultAreaKeyPressed(evt);
+                }
+            });
             jScrollPane1.setViewportView(resultArea);
 
             javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -231,8 +349,6 @@ public class XMLBuilderUI extends javax.swing.JFrame {
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 180, Short.MAX_VALUE)
                     .addContainerGap())
             );
-
-            jPanel1.getAccessibleContext().setAccessibleName("v1.1");
 
             pack();
         }// </editor-fold>//GEN-END:initComponents
@@ -258,6 +374,7 @@ public class XMLBuilderUI extends javax.swing.JFrame {
 
     private void generateButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_generateButtonActionPerformed
         generateXML();
+        resultArea.setCaretPosition(0);
     }//GEN-LAST:event_generateButtonActionPerformed
 
     private void copyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_copyActionPerformed
@@ -316,6 +433,116 @@ public class XMLBuilderUI extends javax.swing.JFrame {
         classNameTextField.selectAll();
     }//GEN-LAST:event_selectAllClassNameActionPerformed
 
+    private void resultAreaKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_resultAreaKeyPressed
+        // TODO add your handling code here:
+        if (evt.isControlDown() && evt.getKeyCode() == KeyEvent.VK_F) {
+            System.out.println("Ctrl F is pressed - start search box");
+            searchDialog.pack();
+            searchDialog.setVisible(true);
+        }
+    }//GEN-LAST:event_resultAreaKeyPressed
+
+    private void searchUpRadioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchUpRadioActionPerformed
+        // TODO add your handling code here:
+        searchUpRadio.setSelected(true);
+        searchDownRadio.setSelected(false);
+        searchDown=false;
+        System.out.println("Setting serach to up");
+    }//GEN-LAST:event_searchUpRadioActionPerformed
+
+    private void searchDownRadioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchDownRadioActionPerformed
+        // TODO add your handling code here:
+        searchDownRadio.setSelected(true);
+        searchUpRadio.setSelected(false);
+        searchDown=true;
+    }//GEN-LAST:event_searchDownRadioActionPerformed
+
+    private void findNextButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_findNextButtonActionPerformed
+        // TODO add your handling code here:
+        System.out.println("Start searching...");
+        searchText(searchTextField.getText(), resultArea.getCaretPosition(), searchDown);
+        
+    }//GEN-LAST:event_findNextButtonActionPerformed
+
+    private void searchTextFieldKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_searchTextFieldKeyPressed
+        // TODO add your handling code here:
+        if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
+            searchText(searchTextField.getText(), resultArea.getCaretPosition(), searchDown);
+        }
+    }//GEN-LAST:event_searchTextFieldKeyPressed
+
+    private void resultSearchButActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resultSearchButActionPerformed
+        // TODO add your handling code here:
+        searchDialog.pack();
+        searchDialog.setVisible(true);
+    }//GEN-LAST:event_resultSearchButActionPerformed
+
+    // Gonna need some sort of starting position check.
+    private void searchText(String text, int searchPos, boolean isDown) {
+//        warningMsg.setVisible(false);
+        warningMsg.setText(null);
+        if (text.length() == 0) {
+            warningMsg.setText("Search box cannot be empty");
+//            warningMsg.setVisible(true);
+            searchDialog.pack();
+            return;
+        }
+        if (resultArea.getText().isEmpty())
+            return;
+        if (!isDown) {
+            searchPos = resultArea.getSelectionStart() - 1;
+        }
+        int startingPos = searchPos;
+        System.out.println("Starting search at pos " + searchPos);
+        text = text.toLowerCase();
+        resultArea.requestFocusInWindow();
+        if (text != null && text.length() > 0) {
+            Document document = resultArea.getDocument();
+            int textLength = text.length();
+            try {
+                boolean found = false;
+                do {
+                    
+                    System.out.println("Current searchPos = " + searchPos);
+                    String match = document.getText(searchPos, textLength).toLowerCase();
+                    if (match.equals(text)) {
+                        found = true;
+                        // Get the rectangle of the where the text would be visible...
+                        Rectangle viewRect = resultArea.modelToView(searchPos);
+                        // Scroll to make the rectangle visible
+                        resultArea.scrollRectToVisible(viewRect);
+                        resultArea.setCaretPosition(searchPos);
+                        resultArea.moveCaretPosition(searchPos + textLength);
+                        break;
+                    }
+                    if (searchDown) {
+                        searchPos++;
+//                        System.out.println("down position " + searchPos);
+                    } else {
+                        searchPos--;
+//                        System.out.println("up position " + searchPos);
+                    }
+                    if (searchPos + textLength > document.getLength()) {
+                        searchPos = 0;
+                    } else if (searchPos < 0) {
+                        searchPos = document.getLength() - textLength;
+                    }
+                } while (searchPos != startingPos);
+                if (searchPos == startingPos) {
+                    System.out.println("Not Found");
+                    warningMsg.setText("Entry not found");
+//                    warningMsg.setVisible(true);
+                    searchDialog.pack();
+                    return;
+                    //resultArea.setCaretPosition(resultArea.getCaretPosition()); //removes Highlighting
+                }
+            } catch (Exception exp) {
+                exp.printStackTrace();
+//                System.out.println("SearchPos " + searchPos);
+            }
+        }
+    }
+    
     private void generateXML() {
         String result = XMLBuilder.build(srcTextField.getText(), classNameTextField.getText());
         resultArea.setText(result);
@@ -391,23 +618,32 @@ public class XMLBuilderUI extends javax.swing.JFrame {
     private javax.swing.JMenuItem copyClassName;
     private javax.swing.JPopupMenu copyPasteSelectAll;
     private javax.swing.JMenuItem copySrc;
+    private javax.swing.JButton findNextButton;
     private javax.swing.JButton generateButton;
     private javax.swing.JFileChooser jFileChooser1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JPopupMenu.Separator jSeparator2;
     private javax.swing.JPopupMenu.Separator jSeparator3;
+    private javax.swing.JPopupMenu.Separator jSeparator4;
     private javax.swing.JMenuItem pasteClassName;
     private javax.swing.JMenuItem pasteSrc;
     private javax.swing.JTextArea resultArea;
+    private javax.swing.JMenuItem resultSearchBut;
     private javax.swing.JPopupMenu resultsPopupMenu;
     private javax.swing.JMenuItem rsltSelectAll;
+    private javax.swing.JDialog searchDialog;
+    private javax.swing.JRadioButton searchDownRadio;
+    private javax.swing.JTextField searchTextField;
+    private javax.swing.JRadioButton searchUpRadio;
     private javax.swing.JMenuItem selectAllClassName;
     private javax.swing.JMenuItem selectAllSrc;
     private javax.swing.JButton srcButton;
     private javax.swing.JTextField srcTextField;
+    private javax.swing.JLabel warningMsg;
     // End of variables declaration//GEN-END:variables
 }
 
