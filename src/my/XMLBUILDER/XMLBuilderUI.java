@@ -11,9 +11,13 @@ import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.scene.input.KeyCode;
 import javax.swing.Action;
 import javax.swing.JFileChooser;
+import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultHighlighter;
 import javax.swing.text.Document;
 import javax.swing.text.Highlighter;
@@ -26,6 +30,8 @@ public class XMLBuilderUI extends javax.swing.JFrame {
     
     private boolean searchDown = true;
     private int searchPos = 0;
+    private String lastSearchText;
+    private ArrayList<Integer> indexHit;
 
     /**
      * Creates new form XMLBuilderUI
@@ -165,9 +171,7 @@ public class XMLBuilderUI extends javax.swing.JFrame {
             classNamePopup.add(selectAllClassName);
 
             searchDialog.setTitle("Find");
-            searchDialog.setModalityType(java.awt.Dialog.ModalityType.MODELESS);
 
-            searchTextField.setText("Ver");
             searchTextField.addKeyListener(new java.awt.event.KeyAdapter() {
                 public void keyPressed(java.awt.event.KeyEvent evt) {
                     searchTextFieldKeyPressed(evt);
@@ -460,19 +464,20 @@ public class XMLBuilderUI extends javax.swing.JFrame {
     private void findNextButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_findNextButtonActionPerformed
         // TODO add your handling code here:
         System.out.println("Start searching...");
-        searchText(searchTextField.getText(), resultArea.getCaretPosition(), searchDown);
+        searchText2(searchTextField.getText(), resultArea.getCaretPosition(), searchDown);
         
     }//GEN-LAST:event_findNextButtonActionPerformed
 
     private void searchTextFieldKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_searchTextFieldKeyPressed
         // TODO add your handling code here:
         if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
-            searchText(searchTextField.getText(), resultArea.getCaretPosition(), searchDown);
+            searchText2(searchTextField.getText(), resultArea.getCaretPosition(), searchDown);
         }
     }//GEN-LAST:event_searchTextFieldKeyPressed
 
     private void resultSearchButActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resultSearchButActionPerformed
         // TODO add your handling code here:
+        resultArea.requestFocusInWindow();
         searchDialog.pack();
         searchDialog.setVisible(true);
     }//GEN-LAST:event_resultSearchButActionPerformed
@@ -502,7 +507,6 @@ public class XMLBuilderUI extends javax.swing.JFrame {
             try {
                 boolean found = false;
                 do {
-                    
                     System.out.println("Current searchPos = " + searchPos);
                     String match = document.getText(searchPos, textLength).toLowerCase();
                     if (match.equals(text)) {
@@ -539,6 +543,91 @@ public class XMLBuilderUI extends javax.swing.JFrame {
             } catch (Exception exp) {
                 exp.printStackTrace();
 //                System.out.println("SearchPos " + searchPos);
+            }
+        }
+    }
+
+    public void searchText2(String text, int searchPos, boolean isDown) {
+//        searchDialog.pack();
+        warningMsg.setText(null);
+        // If there's nothing in the search box
+        if (text.length() == 0) {
+            warningMsg.setText("Search box cannot be empty");
+            searchDialog.pack();
+            return;
+        }
+        // Fail if there's nothing in result
+        if (resultArea.getText().isEmpty()) {
+            return;
+        }
+        // First Run - Build Index
+        if (!text.equals(lastSearchText)) {
+            lastSearchText = text;
+            indexHit = new ArrayList<Integer>();
+            int startingPos = searchPos;
+            text = text.toLowerCase();
+            String result = resultArea.getText().toLowerCase();
+            // check to see if it contains text:
+            if (!result.contains(text)) {
+                System.out.println("Not Found");
+                warningMsg.setText("Entry not found");
+                searchDialog.pack();
+                return;
+            }
+            int index = 0;
+            while (index != -1) {
+                int hit = result.indexOf(text, index);
+                if (hit == -1) {
+                    break;
+                }
+                indexHit.add(hit);
+//                System.out.println("Adding index = " + index);
+                index = hit + 1;
+            }
+        }
+        // Now that we have the index, highlight the one we want.
+        resultArea.requestFocusInWindow();
+        boolean nextItem = false;
+        if (isDown) {
+            // highlight the next biggest one.
+            for (int i = 0; i < indexHit.size(); i++) {
+                if (indexHit.get(i) >= searchPos) {
+                    try {
+//                        System.out.println("This area is lit up = " + indexHit.get(i));
+                        Rectangle viewRect = resultArea.modelToView(indexHit.get(i));
+                        resultArea.scrollRectToVisible(viewRect);
+                        resultArea.setCaretPosition(indexHit.get(i));
+                        resultArea.moveCaretPosition(indexHit.get(i) + text.length());
+                        //nextItem = true;
+                        return;
+                    } catch (BadLocationException ex) {
+                        Logger.getLogger(XMLBuilderUI.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                } else if (i == indexHit.size() - 1) {
+                    searchPos = 0;
+                    i = -1;
+                }
+            }
+        } // going up
+        else {
+            searchPos = resultArea.getSelectionStart() - 1;
+            for (int i = indexHit.size() - 1; i >= 0; i--) {
+                if (indexHit.get(i) < searchPos) {
+                    try {
+//                        System.out.println("This area is lit up = " + indexHit.get(i));
+                        Rectangle viewRect = resultArea.modelToView(indexHit.get(i));
+                        resultArea.scrollRectToVisible(viewRect);
+                        resultArea.setCaretPosition(indexHit.get(i));
+                        resultArea.moveCaretPosition(indexHit.get(i) + text.length());
+                        //nextItem = true;
+                        return;
+                    } catch (BadLocationException ex) {
+                        Logger.getLogger(XMLBuilderUI.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                } else if (i == 0) {
+                    searchPos = resultArea.getText().length();
+                    i = indexHit.size();
+                }
             }
         }
     }
