@@ -464,14 +464,14 @@ public class XMLBuilderUI extends javax.swing.JFrame {
     private void findNextButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_findNextButtonActionPerformed
         // TODO add your handling code here:
         System.out.println("Start searching...");
-        searchText2(searchTextField.getText(), resultArea.getCaretPosition(), searchDown);
+        searchText(searchTextField.getText(), resultArea.getCaretPosition(), searchDown);
         
     }//GEN-LAST:event_findNextButtonActionPerformed
 
     private void searchTextFieldKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_searchTextFieldKeyPressed
         // TODO add your handling code here:
         if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
-            searchText2(searchTextField.getText(), resultArea.getCaretPosition(), searchDown);
+            searchText(searchTextField.getText(), resultArea.getCaretPosition(), searchDown);
         }
     }//GEN-LAST:event_searchTextFieldKeyPressed
 
@@ -482,72 +482,7 @@ public class XMLBuilderUI extends javax.swing.JFrame {
         searchDialog.setVisible(true);
     }//GEN-LAST:event_resultSearchButActionPerformed
 
-    // Gonna need some sort of starting position check.
-    private void searchText(String text, int searchPos, boolean isDown) {
-//        warningMsg.setVisible(false);
-        warningMsg.setText(null);
-        if (text.length() == 0) {
-            warningMsg.setText("Search box cannot be empty");
-//            warningMsg.setVisible(true);
-            searchDialog.pack();
-            return;
-        }
-        if (resultArea.getText().isEmpty())
-            return;
-        if (!isDown) {
-            searchPos = resultArea.getSelectionStart() - 1;
-        }
-        int startingPos = searchPos;
-        System.out.println("Starting search at pos " + searchPos);
-        text = text.toLowerCase();
-        resultArea.requestFocusInWindow();
-        if (text != null && text.length() > 0) {
-            Document document = resultArea.getDocument();
-            int textLength = text.length();
-            try {
-                boolean found = false;
-                do {
-                    System.out.println("Current searchPos = " + searchPos);
-                    String match = document.getText(searchPos, textLength).toLowerCase();
-                    if (match.equals(text)) {
-                        found = true;
-                        // Get the rectangle of the where the text would be visible...
-                        Rectangle viewRect = resultArea.modelToView(searchPos);
-                        // Scroll to make the rectangle visible
-                        resultArea.scrollRectToVisible(viewRect);
-                        resultArea.setCaretPosition(searchPos);
-                        resultArea.moveCaretPosition(searchPos + textLength);
-                        break;
-                    }
-                    if (searchDown) {
-                        searchPos++;
-//                        System.out.println("down position " + searchPos);
-                    } else {
-                        searchPos--;
-//                        System.out.println("up position " + searchPos);
-                    }
-                    if (searchPos + textLength > document.getLength()) {
-                        searchPos = 0;
-                    } else if (searchPos < 0) {
-                        searchPos = document.getLength() - textLength;
-                    }
-                } while (searchPos != startingPos);
-                if (searchPos == startingPos) {
-                    System.out.println("Not Found");
-                    warningMsg.setText("Entry not found");
-//                    warningMsg.setVisible(true);
-                    searchDialog.pack();
-                    return;
-                    //resultArea.setCaretPosition(resultArea.getCaretPosition()); //removes Highlighting
-                }
-            } catch (Exception exp) {
-                exp.printStackTrace();
-//                System.out.println("SearchPos " + searchPos);
-            }
-        }
-    }
-
-    public void searchText2(String text, int searchPos, boolean isDown) {
+    public void searchText(String text, int searchPos, boolean isDown) {
 //        searchDialog.pack();
         warningMsg.setText(null);
         // If there's nothing in the search box
