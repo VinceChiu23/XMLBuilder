@@ -76,6 +76,7 @@ public class XMLBuilder {
         String[] stringValue = allParams.split(",");
         String temp = "";
         for (String i: stringValue) {
+            boolean skip = false;
             String optValue = "\"\"";
             i = temp + i;
             i = i.trim();
@@ -93,17 +94,26 @@ public class XMLBuilder {
                 temp = i +",";
             }
             else {
+                // Checking for Optional value
                 if (i.startsWith("@Optional")) {
-                    optValue = i.substring(i.indexOf('\"'), i.lastIndexOf('\"')+1);
+                    // Under normal circumstances - 
+                    if (i.contains("\"")) {
+                        optValue = i.substring(i.indexOf('\"'), i.lastIndexOf('\"')+1);
+                    }
+                    // if it's using a predefined value. Lets skip it. 
+                    else
+                        skip = true;
                 }
 //                System.out.println("ParamName = " + i.substring(i.lastIndexOf(" ")+1));
 //                System.out.println("Optional value = " + optValue);
                 if (i.substring(0, i.indexOf(" ")).equalsIgnoreCase("ITestContext"))
                     break;
                 else {
-                String paramName = i.substring(i.lastIndexOf(" ")+1);
-                xml = xml + "\t<parameter name=\"" + paramName + "\" ";
-                xml = xml + "value=" + optValue + " />\n";
+                    if (!skip) {
+                        String paramName = i.substring(i.lastIndexOf(" ")+1);
+                        xml = xml + "\t<parameter name=\"" + paramName + "\" ";
+                        xml = xml + "value=" + optValue + " />\n";
+                    }
                 count = 0;
                 temp = "";
                 }
